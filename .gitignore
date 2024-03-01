@@ -161,3 +161,5 @@ cython_debug/
 
 raw_data
 zarr_data
+workdir
+sam_checkpoints

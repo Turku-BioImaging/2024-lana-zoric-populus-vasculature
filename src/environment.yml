@@ -1,0 +1,19 @@
+name: project-plant-vasculature
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - ca-certificates
+  - openssl
+  - pip
+  - pip:
+      - git+https://github.com/facebookresearch/segment-anything.git
+  - python=3.10
+  - pytorch
+  - pytorch-cuda=12.1
+  - torchaudio
+  - torchvision
+  - tqdm
+  - scikit-image
+  - zarr
