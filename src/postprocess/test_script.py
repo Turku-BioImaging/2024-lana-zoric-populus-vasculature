@@ -18,7 +18,7 @@ from glob import glob
 # )
 # image = io.imread(image_path)
 
-#image_paths = sorted(
+# image_paths = sorted(
 #   glob(
 #        os.path.join(
 #           os.path.dirname(__file__),
@@ -31,27 +31,26 @@ from glob import glob
 #            "*Simple Segmentation.tif",
 #        )
 #    )
-#)
+# )
 
 
-#for i in image_paths:
- #   mask = img_as_bool(io.imread(i))
-  #  print(os.path.basename(i))
-    # print(mask.shape, mask.dtype)
-    # plt.imshow(mask)
-    # plt.show()
+# for i in image_paths:
+#   mask = img_as_bool(io.imread(i))
+#  print(os.path.basename(i))
+# print(mask.shape, mask.dtype)
+# plt.imshow(mask)
+# plt.show()
 
- #   io.imsave("mask_1.tif", mask)
+#   io.imsave("mask_1.tif", mask)
 
-  #  mask_filtered = remove_small_objects(mask, min_size=1000)
+#  mask_filtered = remove_small_objects(mask, min_size=1000)
 
-  #  io.imsave("mask_2.tif", mask_filtered)
+#  io.imsave("mask_2.tif", mask_filtered)
 
-    # plt.imshow(mask_filtered)
-    # plt.show()
+# plt.imshow(mask_filtered)
+# plt.show()
 
-   # break
-
+# break
 
 
 # Display the image
@@ -60,16 +59,16 @@ from glob import glob
 # plt.show()
 
 
-
 # new code for saving filter mask in raw data folder
 
 
-
 # Define the path to the directory containing the original masks
-original_masks_dir = os.path.join('..', '..', "data", "raw_data", "ilastik_binary_masks")
+original_masks_dir = os.path.join(
+    "..", "..", "data", "raw_data", "ilastik_binary_masks"
+)
 
 # Define the path to the existing folder
-existing_folder_path = os.path.join('..', '..', "data", "raw_data", "Filter_RSO_images")
+existing_folder_path = os.path.join("..", "..", "data", "raw_data", "Filter_RSO_images")
 
 # Create the existing folder if it doesn't exist
 os.makedirs(existing_folder_path, exist_ok=True)
@@ -90,20 +89,23 @@ image_paths = sorted(
 for i in image_paths:
     # Read the original mask
     mask = img_as_bool(io.imread(i))
-    
+
     # Get the filename
     filename = os.path.basename(i)
-    
+
     # Print the filename
     print(filename)
-    
+
     # Save the original mask in the existing folder
-    io.imsave(os.path.join(existing_folder_path, "original_" + filename), img_as_ubyte(mask))
-    
+    io.imsave(
+        os.path.join(existing_folder_path, "original_" + filename), img_as_ubyte(mask)
+    )
+
     # Remove small objects from the mask
     mask_filtered = remove_small_objects(mask, min_size=1000)
-    
-    # Save the filtered mask in the existing folder
-    io.imsave(os.path.join(existing_folder_path, "filtered_" + filename), img_as_ubyte(mask_filtered))
 
-    
+    # Save the filtered mask in the existing folder
+    io.imsave(
+        os.path.join(existing_folder_path, "filtered_" + filename),
+        img_as_ubyte(mask_filtered),
+    )
