@@ -8,5 +8,5 @@ dependencies:
   - pip
   - python=3.10
   - tqdm
-  - scikit-image
-  - zarr
+  - scikit-image=0.23
+  - zarr=2.18
