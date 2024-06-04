@@ -1,4 +1,5 @@
-
+// Experimental ImageJ macro used to implement initial downscaling of raw data.
+// Saved here as a reference; this will be reimplemented using scikit-image.
 
 // Prompt to select the parent directory
 dir = getDirectory("Select parent directory");
