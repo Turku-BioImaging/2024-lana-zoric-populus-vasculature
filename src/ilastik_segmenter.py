@@ -21,10 +21,13 @@ MODEL_NAME = "model-2024-05-07"
 class IlastikSegmenter:
     pipeline = from_project_file(os.path.join(MODEL_DIR, MODEL_NAME + ".ilp"))
 
-    # def __init__(self):
-
-    def segment_one(self, clone_data: Tuple[str, str, str]):
+    def segment_one(self, clone_data: Tuple[str, str, str], overwrite: bool = True):
         data_dir, clone, sample = clone_data
+
+        mask_path = os.path.join(data_dir, clone, sample, "binary_mask.tif")
+        if overwrite is False and os.path.isfile(mask_path):
+            return
+
         img = io.imread(os.path.join(data_dir, clone, sample, "raw_data.tif"))
         assert img.ndim == 3, img.shape[2] == 3
 
@@ -35,5 +38,6 @@ class IlastikSegmenter:
         pred: np.ndarray = self.pipeline.predict(data_array).values
         pred: np.ndarray = img_as_ubyte(pred[..., 1] >= 0.5)
 
-        mask_path = os.path.join(data_dir, clone, sample, "binary_mask.tif")
+        # mask_path = os.path.join(data_dir, clone, sample, "binary_mask.tif")
+
         io.imsave(mask_path, pred, check_contrast=False)

@@ -36,7 +36,7 @@ parser.add_argument(
     help="Skip generating binary mask from Ilastik",
 )
 parser.add_argument(
-    "--overwrite", type=bool, default=True, help="Overwrite existing images."
+    "--overwrite", action="store_true", help="Overwrite existing images."
 )
 
 args = parser.parse_args()
@@ -61,8 +61,8 @@ if args.skip_raw_data is False:
                 output_dir=args.output_dir,
                 clone_name=clone_dir,
                 sample_name=sample_name,
+                overwrite=args.overwrite,
             )
-
 # ilastik segmentation
 clone_data = [
     (OUTPUT_DIR, clone, sample)
@@ -74,5 +74,5 @@ clone_data = [
 
 segmenter = IlastikSegmenter()
 for item in tqdm(clone_data, desc="Segmenting images using Ilastik..."):
-    segmenter.segment_one(item)
+    segmenter.segment_one(item, overwrite=args.overwrite)
     # break
