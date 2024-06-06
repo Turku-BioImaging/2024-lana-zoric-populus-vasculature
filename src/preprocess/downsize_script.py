@@ -1,6 +1,7 @@
 import os
-from skimage import io, transform
+from skimage import io, transform, img_as_ubyte
 import numpy as np
+import tifffile
 
 SCALE_FACTOR = 0.5
 
@@ -24,7 +25,7 @@ def downsize_images_in_folder(input_folder):
                     # Using order=1 to ensure bilinear interpolation
                     resized_image = transform.rescale(
                         image,
-                        scale_factor=SCALE_FACTOR,
+                        SCALE_FACTOR,
                         anti_aliasing=True,
                         order=1,
                         channel_axis=-1,
@@ -33,6 +34,9 @@ def downsize_images_in_folder(input_folder):
                     # Clip the values to ensure they're in the correct range [0, 1] for float images
                     if resized_image.dtype == np.float64:
                         resized_image = np.clip(resized_image, 0, 1)
+                        
+                        # Convert the image to unsigned byte format
+                    resized_image = img_as_ubyte(resized_image)
 
                     # Print resized image shape
                     print(f"Resized image size: {resized_image.shape}")
@@ -48,10 +52,10 @@ def downsize_images_in_folder(input_folder):
                 except Exception as e:
                     print(f"Error processing file {file_path}: {e}")
 
-
-# Example usage
+                
+# path to the folder containing images
 input_folder = os.path.join(
     os.path.dirname(__file__), "..", "..", "data", "outputs"
-)  # Replace with the path to your folder containing images
+)  
 
 downsize_images_in_folder(input_folder)
