@@ -15,7 +15,7 @@ from skimage.util import img_as_ubyte
 from xarray import DataArray
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "ilastik_model")
-MODEL_NAME = "model-2024-05-07"
+MODEL_NAME = "model-2024-06-06"
 
 
 class IlastikSegmenter:
