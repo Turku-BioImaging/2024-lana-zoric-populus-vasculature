@@ -4,11 +4,12 @@ channels:
   - ilastik-forge
 dependencies:
   - ca-certificates
-  - ilastik=1.4
+  - pandas=2.2
+  - ilastik-core=1.4.1b15
   - matplotlib
   - openssl
   - pip
   - python=3.9
+  - scikit-image=0.19
   - tqdm
-  - scikit-image=0.23
-  - zarr=2.18
+  - zarr=2.17
