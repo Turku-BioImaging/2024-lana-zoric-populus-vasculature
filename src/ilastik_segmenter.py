@@ -31,12 +31,22 @@ class IlastikSegmenter:
         img = io.imread(os.path.join(data_dir, clone, sample, "raw_data.tif"))
         assert img.ndim == 3, img.shape[2] == 3
 
-        img: np.ndarray = img_as_ubyte(
-            rescale(img, 0.5, anti_aliasing=True, order=1, channel_axis=2)
+       # Get the original image dimensions
+original_shape = img.shape[:2]  # (y, x)
+
+# Upscale the predicted mask back to the original dimensions
+pred_upscaled: np.ndarray = resize(
+    img_as_ubyte(pred_binary), original_shape, anti_aliasing=True, order=0, preserve_range=True
+)
         )
         data_array: Any = DataArray(img, dims=["y", "x", "c"])
         pred: np.ndarray = self.pipeline.predict(data_array).values
         pred: np.ndarray = img_as_ubyte(pred[..., 1] >= 0.5)
+        
+        # Upscale back to original
+        upimg: np.ndarray = img_as_ubyte(
+            rescale(img, , anti_aliasing=True, order=0, preserve_range=True
+        )
 
         # mask_path = os.path.join(data_dir, clone, sample, "binary_mask.tif")
 
