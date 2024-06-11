@@ -4,6 +4,7 @@ channels:
   - ilastik-forge
 dependencies:
   - ca-certificates
+  - imagecodecs=2023.9.18
   - pandas=2.2
   - ilastik-core=1.4.1b15
   - matplotlib

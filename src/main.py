@@ -7,6 +7,7 @@ Turku BioImaging, 2024
 import argparse
 import os
 from glob import glob
+from joblib import Parallel, delayed
 
 from ilastik_segmenter import IlastikSegmenter
 from raw_data import copy_raw_data_to_output
@@ -48,6 +49,17 @@ clone_dirs = [
     if os.path.isdir(os.path.join(RAW_DATA_DIR, items))
 ]
 
+
+def copy_sample(raw_data_dir, output_dir, clone_name, sample_name, overwrite):
+    copy_raw_data_to_output(
+        raw_data_dir=raw_data_dir,
+        output_dir=output_dir,
+        clone_name=clone_name,
+        sample_name=sample_name,
+        overwrite=overwrite,
+    )
+
+
 if args.skip_raw_data is False:
     for clone_dir in clone_dirs:
         sample_names = [
@@ -55,14 +67,19 @@ if args.skip_raw_data is False:
             for sample_name in glob(os.path.join(RAW_DATA_DIR, clone_dir, "*.tif"))
         ]
 
-        for sample_name in tqdm(sample_names, desc=f"Copying {clone_dir} samples..."):
-            copy_raw_data_to_output(
+        Parallel(n_jobs=-1)(
+            delayed(copy_sample)(
                 raw_data_dir=args.raw_data_dir,
                 output_dir=args.output_dir,
                 clone_name=clone_dir,
                 sample_name=sample_name,
                 overwrite=args.overwrite,
             )
+            for sample_name in tqdm(
+                sample_names, desc=f"Copying {clone_dir} samples..."
+            )
+        )
+
 # ilastik segmentation
 clone_data = [
     (OUTPUT_DIR, clone, sample)
