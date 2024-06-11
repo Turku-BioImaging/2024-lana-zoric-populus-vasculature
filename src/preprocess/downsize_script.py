@@ -27,7 +27,6 @@ def downsize_images_in_folder(input_folder):
                         image,
                         SCALE_FACTOR,
                         anti_aliasing=True,
-                        order=1,
                         channel_axis=-1,
                     )
 
