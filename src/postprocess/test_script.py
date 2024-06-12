@@ -38,14 +38,16 @@ def process_sample(data_dir: str, clone: str, sample: str) -> List[Dict]:
     # for prop in properties:
     #     if prop.eccentricity > ECCENTRICITY_THRESHOLD:
     #         labeled_image[labeled_image == prop.label] = 0
-    
-    
+
     # Remove non-round objects based on eccentricity and aspect ratio
     properties = regionprops(labeled_image)
     for prop in properties:
         eccentricity = prop.eccentricity
-        aspect_ratio = prop.minor_axis_length / prop.major_axis_length if prop.major_axis_length > 0 else 0
-        if eccentricity > ECCENTRICITY_THRESHOLD or aspect_ratio < ASPECT_RATIO_THRESHOLD:
+        aspect_ratio = prop.minor_axis_length / prop.major_axis_length
+        if (
+            eccentricity > ECCENTRICITY_THRESHOLD
+            or aspect_ratio < ASPECT_RATIO_THRESHOLD
+        ):
             labeled_image[labeled_image == prop.label] = 0
 
     properties = regionprops(labeled_image)
@@ -86,7 +88,7 @@ sample_data = [
 all_object_sizes = []
 for item in tqdm(sample_data):
     all_object_sizes.extend(process_sample(DATA_PATH, *item))
-   
+
 
 df = pd.DataFrame(all_object_sizes)
 df.to_csv(os.path.join(DATA_PATH, "object_sizes.csv"), index=False)
