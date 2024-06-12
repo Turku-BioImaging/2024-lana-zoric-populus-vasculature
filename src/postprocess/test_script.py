@@ -11,7 +11,8 @@ from tqdm import tqdm
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "outputs")
 MIN_OBJECT_SIZE = 20000
-ECCENTRICITY_THRESHOLD = 0.995  # Adjust this value as needed
+ECCENTRICITY_THRESHOLD = 0.9  # Adjust this value as needed
+ASPECT_RATIO_THRESHOLD = 0.5  # Adjust this value as needed
 
 
 def process_sample(data_dir: str, clone: str, sample: str) -> List[Dict]:
@@ -32,10 +33,19 @@ def process_sample(data_dir: str, clone: str, sample: str) -> List[Dict]:
 
     labeled_image = clear_border(labeled_image)
 
-    # Remove non-round objects
+    # # Remove non-round objects
+    # properties = regionprops(labeled_image)
+    # for prop in properties:
+    #     if prop.eccentricity > ECCENTRICITY_THRESHOLD:
+    #         labeled_image[labeled_image == prop.label] = 0
+    
+    
+    # Remove non-round objects based on eccentricity and aspect ratio
     properties = regionprops(labeled_image)
     for prop in properties:
-        if prop.eccentricity > ECCENTRICITY_THRESHOLD:
+        eccentricity = prop.eccentricity
+        aspect_ratio = prop.minor_axis_length / prop.major_axis_length if prop.major_axis_length > 0 else 0
+        if eccentricity > ECCENTRICITY_THRESHOLD or aspect_ratio < ASPECT_RATIO_THRESHOLD:
             labeled_image[labeled_image == prop.label] = 0
 
     properties = regionprops(labeled_image)
@@ -76,7 +86,7 @@ sample_data = [
 all_object_sizes = []
 for item in tqdm(sample_data):
     all_object_sizes.extend(process_sample(DATA_PATH, *item))
-    break
+   
 
 df = pd.DataFrame(all_object_sizes)
 df.to_csv(os.path.join(DATA_PATH, "object_sizes.csv"), index=False)
