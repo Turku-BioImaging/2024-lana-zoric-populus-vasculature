@@ -1,12 +1,13 @@
 import os
+from typing import Dict, List
+
 import pandas as pd
 from skimage import io  # type: ignore
-from skimage.util import img_as_ubyte
-from skimage.morphology import remove_small_objects
 from skimage.measure import label, regionprops
+from skimage.morphology import remove_small_objects
 from skimage.segmentation import clear_border
+from skimage.util import img_as_ubyte
 from tqdm import tqdm
-from typing import List, Dict
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "outputs")
 MIN_OBJECT_SIZE = 20000
@@ -21,32 +22,23 @@ def process_sample(data_dir: str, clone: str, sample: str) -> List[Dict]:
     filtered_mask = remove_small_objects(mask, min_size=MIN_OBJECT_SIZE)
 
     labeled_image = label(filtered_mask)
-    
+
     # Save the labeled image before removing border-touching objects
     io.imsave(
         os.path.join(data_dir, clone, sample, "labeled_before_border_removal.tif"),
         labeled_image,
         check_contrast=False,
     )
-    
-    # Remove objects touching the borders
-    binary_mask = labeled_image > 0
-    border_cleared_binary_mask = clear_border(binary_mask)
-    
-    # Re-label after border clearing
-    labeled_image_after_border_removal = label(border_cleared_binary_mask)
-    
+
+    labeled_image = clear_border(labeled_image)
+
     # Remove non-round objects
-    properties = regionprops(labeled_image_after_border_removal)
+    properties = regionprops(labeled_image)
     for prop in properties:
         if prop.eccentricity > ECCENTRICITY_THRESHOLD:
-            labeled_image_after_border_removal[labeled_image_after_border_removal == prop.label] = 0
-    
-    # Re-label after removing non-round objects
-    final_labeled_image = label(labeled_image_after_border_removal)
+            labeled_image[labeled_image == prop.label] = 0
 
-
-    properties = regionprops(final_labeled_image)
+    properties = regionprops(labeled_image)
     object_sizes: List[Dict] = [
         {
             "clone": clone,
@@ -62,6 +54,7 @@ def process_sample(data_dir: str, clone: str, sample: str) -> List[Dict]:
         img_as_ubyte(filtered_mask),
         check_contrast=False,
     )
+
     io.imsave(
         os.path.join(data_dir, clone, sample, "object_labels.tif"),
         labeled_image,
