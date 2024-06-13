@@ -1,19 +1,16 @@
 name: project-plant-vasculature
 channels:
-  - pytorch
-  - nvidia
   - conda-forge
+  - ilastik-forge
 dependencies:
   - ca-certificates
+  - imagecodecs=2023.9.18
+  - pandas=2.2
+  - ilastik-core=1.4.1b15
+  - matplotlib
   - openssl
   - pip
-  - pip:
-      - git+https://github.com/facebookresearch/segment-anything.git
-  - python=3.10
-  - pytorch
-  - pytorch-cuda=12.1
-  - torchaudio
-  - torchvision
+  - python=3.9
+  - scikit-image=0.19
   - tqdm
-  - scikit-image
-  - zarr
+  - zarr=2.17
