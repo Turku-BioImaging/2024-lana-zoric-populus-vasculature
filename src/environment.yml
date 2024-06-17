@@ -4,13 +4,16 @@ channels:
   # - ilastik-forge
 dependencies:
   - ca-certificates
-  - imagecodecs=2023.9.18
+  # - imagecodecs=2023.9.18
   - pandas=2.2
   # - ilastik-core=1.4.1b15
   - matplotlib
   - openssl
   - pip
+  - polars=0.20
   - python=3.10
+  - rasterio=1.3
   - scikit-image=0.23
+  - shapely=2.0
   - tqdm
   - zarr=2.18
