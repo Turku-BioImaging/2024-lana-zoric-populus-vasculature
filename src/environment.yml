@@ -1,12 +1,8 @@
 name: project-plant-vasculature
 channels:
   - conda-forge
-  # - ilastik-forge
 dependencies:
   - ca-certificates
-  # - imagecodecs=2023.9.18
-  - pandas=2.2
-  # - ilastik-core=1.4.1b15
   - matplotlib
   - openssl
   - pip
@@ -15,5 +11,9 @@ dependencies:
   - rasterio=1.3
   - scikit-image=0.23
   - shapely=2.0
+  - tensorflow[and-cuda]
   - tqdm
   - zarr=2.18
+  - pip:
+    - gputools
+    - stardist==0.9.1

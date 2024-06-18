@@ -33,12 +33,6 @@ def process_sample(data_dir: str, clone: str, sample: str) -> List[Dict]:
 
     labeled_image = clear_border(labeled_image)
 
-    # # Remove non-round objects
-    # properties = regionprops(labeled_image)
-    # for prop in properties:
-    #     if prop.eccentricity > ECCENTRICITY_THRESHOLD:
-    #         labeled_image[labeled_image == prop.label] = 0
-
     # Remove non-round objects based on eccentricity and aspect ratio
     properties = regionprops(labeled_image)
     for prop in properties:
