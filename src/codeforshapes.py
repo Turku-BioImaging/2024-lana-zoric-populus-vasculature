@@ -1,14 +1,17 @@
+"""
+Generates label images from vector shape files.
+"""
+
 import os
+from glob import glob
+
 import numpy as np
 import polars as pl
-from glob import glob
-from shapely.geometry import Polygon
 from rasterio.features import rasterize
+from shapely.geometry import Polygon
 from skimage import io
-from tqdm import tqdm
-from skimage import io
-from skimage.util import img_as_ubyte
 from skimage.measure import label
+from tqdm import tqdm
 
 # Path to shape directory
 SHAPE_DIR = os.path.join(
