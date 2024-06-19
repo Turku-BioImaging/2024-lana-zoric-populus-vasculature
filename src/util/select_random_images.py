@@ -30,7 +30,7 @@ clone_data = [
 np.random.seed(4425)
 np.random.shuffle(clone_data)
 
-clone_data = clone_data[:30]
+clone_data = clone_data[:45]
 
 for item in tqdm(clone_data):
     clone, sample = item
@@ -40,4 +40,7 @@ for item in tqdm(clone_data):
     assert img.shape[2] == 3, f"Expected 3 channels, got {img.shape[2]}"
 
     output_path = os.path.join(OUTPUT_DIR, f"{sample}.tif")
-    io.imsave(output_path, img, check_contrast=False)
+    if os.path.isfile(output_path):
+        continue
+    else:
+        io.imsave(os.path.join(OUTPUT_DIR, "new", f"{sample}.tif"), img)
