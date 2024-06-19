@@ -3,7 +3,6 @@ Experimental StarDist prediction script for custom data.
 """
 
 import os
-from glob import glob
 from tqdm import tqdm
 import numpy as np
 from skimage import io
@@ -41,7 +40,7 @@ for item in tqdm(sample_data):
     img = downscale_image(img_path)
     img = normalize(img, 1, 99.8, axis=(0, 1))
 
-    labels, _ = model.predict_instances(img)
+    labels, _ = model.predict_instances(img)  # type: ignore
 
     labels = rescale(labels, 10, anti_aliasing=False, order=0)
 
