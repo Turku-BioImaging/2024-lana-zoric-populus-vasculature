@@ -2,21 +2,23 @@
 Experimental StarDist training script for custom data.
 """
 
-from glob import glob
-from tqdm import tqdm
-import numpy as np
-from skimage import io
-from csbdeep.utils import Path, normalize
-from stardist import (
-    fill_label_holes,
-    random_label_cmap,
-    calculate_extents,
-    gputools_available,
-)
-from stardist.matching import matching, matching_dataset
-from stardist.models import Config2D, StarDist2D, StarDistData2D
+import argparse
 import os
+from glob import glob
+
+import numpy as np
+from csbdeep.utils import normalize
+from skimage import io
 from skimage.transform import rescale
+from stardist import (
+    calculate_extents,
+    fill_label_holes,
+    gputools_available,
+    random_label_cmap,
+)
+from stardist.matching import matching_dataset
+from stardist.models import Config2D, StarDist2D
+from tqdm import tqdm
 
 np.random.seed(20)
 lbl_cmap = random_label_cmap()
@@ -51,6 +53,12 @@ IMG_DIR = os.path.join(
 LABEL_DIR = os.path.join(
     os.path.dirname(__file__), "..", "..", "data", "stardist_data", "labels"
 )
+
+BATCH_SIZE = 12
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--model-name", type=str, default="stardist-test-2")
+args = parser.parse_args()
 
 X = sorted(glob(os.path.join(IMG_DIR, "*.tif")))
 Y = sorted(glob(os.path.join(LABEL_DIR, "*.tif")))
@@ -91,10 +99,16 @@ use_gpu = False and gputools_available()
 
 grid = (2, 2)
 
-conf = Config2D(n_rays=n_rays, grid=grid, use_gpu=use_gpu, n_channel_in=n_channel)
+conf = Config2D(
+    n_rays=n_rays,
+    grid=grid,
+    use_gpu=use_gpu,
+    n_channel_in=n_channel,
+    train_batch_size=BATCH_SIZE,
+)
 
 
-model = StarDist2D(conf, name="stardist-test", basedir="models")
+model = StarDist2D(conf, name="stardist-test-2", basedir="models")
 
 median_size = calculate_extents(list(Y), np.median)
 fov = np.array(model._axes_tile_overlap("YX"))
@@ -120,9 +134,9 @@ def random_fliprot(img, mask):
     return img, mask
 
 
-def random_intensity_change(img):
-    img = img * np.random.uniform(0.6, 2) + np.random.uniform(-0.2, 0.2)
-    return img
+# def random_intensity_change(img):
+#     img = img * np.random.uniform(0.6, 2) + np.random.uniform(-0.2, 0.2)
+#     return img
 
 
 def augmenter(x, y):
@@ -131,7 +145,7 @@ def augmenter(x, y):
     y is the corresponding ground-truth label image
     """
     x, y = random_fliprot(x, y)
-    x = random_intensity_change(x)
+    # x = random_intensity_change(x)
     # add some gaussian noise
     sig = 0.02 * np.random.uniform(0, 1)
     x = x + sig * np.random.normal(0, 1, x.shape)
@@ -144,19 +158,26 @@ model.train(
     validation_data=(X_val, Y_val),
     augmenter=augmenter,
     epochs=200,
-    steps_per_epoch=10,
+    steps_per_epoch=30,
 )
 
 # threshold optimization
 model.optimize_thresholds(X_val, Y_val)
 
 # evaluate detection performance
-Y_val_pred = [model.predict_instances(x, n_tiles=model._guess_n_tiles(x), show_tile_progress=False)[0]
-              for x in tqdm(X_val)]
+Y_val_pred = [
+    model.predict_instances(
+        x, n_tiles=model._guess_n_tiles(x), show_tile_progress=False
+    )[0]
+    for x in tqdm(X_val)
+]
 
 
 taus = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-stats = [matching_dataset(Y_val, Y_val_pred, thresh=t, show_progress=False) for t in tqdm(taus)]
+stats = [
+    matching_dataset(Y_val, Y_val_pred, thresh=t, show_progress=False)
+    for t in tqdm(taus)
+]
 
 
 stats[taus.index(0.5)]
