@@ -23,7 +23,7 @@ def downscale_image(img_path: str, scale_factor: float = 0.10) -> np.ndarray:
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "outputs")
 
 
-model = StarDist2D(None, name="stardist-test", basedir="models")
+model = StarDist2D(None, name="stardist-test-2", basedir="models")
 
 sample_data = [
     (clone, sample)
