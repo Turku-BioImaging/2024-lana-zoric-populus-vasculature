@@ -8,6 +8,7 @@ import numpy as np
 from skimage import io
 from csbdeep.utils import normalize
 from stardist.models import StarDist2D
+from skimage.segmentation import clear_border
 from skimage.transform import rescale
 
 
@@ -41,6 +42,8 @@ for item in tqdm(sample_data):
     img = normalize(img, 1, 99.8, axis=(0, 1))
 
     labels, _ = model.predict_instances(img)  # type: ignore
+    
+    labels = clear_border(labels)
 
     labels = rescale(labels, 10, anti_aliasing=False, order=0)
 
