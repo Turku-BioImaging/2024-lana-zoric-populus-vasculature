@@ -1,15 +1,16 @@
-
 # calculate area and parimeter of the label objects in the stardist predicted images
 
 import os
 from typing import Dict, List
-from skimage import io
-import polars as pl
-from tqdm import tqdm
-from skimage.measure import regionprops, label
 
+import polars as pl
+from joblib import Parallel, delayed
+from skimage import io
+from skimage.measure import label, regionprops
+from tqdm import tqdm
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "outputs")
+
 
 def process_sample(data_dir: str, clone: str, sample: str) -> List[Dict]:
     mask = io.imread(os.path.join(data_dir, clone, sample, "stardist_label.tif"))
@@ -18,7 +19,7 @@ def process_sample(data_dir: str, clone: str, sample: str) -> List[Dict]:
     mask = mask > 0
 
     labeled_mask = label(mask)
-    
+
     properties = regionprops(labeled_mask)
     object_sizes: List[Dict] = [
         {
@@ -26,11 +27,12 @@ def process_sample(data_dir: str, clone: str, sample: str) -> List[Dict]:
             "sample": sample,
             "label": prop.label,
             "size_pixels": prop.area,
-            "perimeter_pixcels": prop.perimeter,
+            "perimeter_pixels": prop.perimeter,
         }
         for prop in properties
-    ] 
+    ]
     return object_sizes
+
 
 clone_data = [
     (clone, sample)
@@ -41,9 +43,10 @@ clone_data = [
 ]
 
 
-all_object_sizes = []
-for item in tqdm(clone_data):
-    all_object_sizes.extend(process_sample(DATA_DIR, *item))  
+object_sizes = Parallel(n_jobs=-1)(
+    delayed(process_sample)(DATA_DIR, *item) for item in tqdm(clone_data)
+)
+all_object_sizes = [item for sublist in object_sizes for item in sublist]
 
 
 df = pl.DataFrame(all_object_sizes)
