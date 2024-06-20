@@ -9,9 +9,7 @@ from skimage import io
 from skimage.measure import label, regionprops
 from tqdm import tqdm
 
-pixel_size = 0.0878
-area_of_one_pixel = pixel_size **2
-
+PIXEL_SIZE = 0.0878
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "outputs")
 
 
@@ -30,9 +28,9 @@ def process_sample(data_dir: str, clone: str, sample: str) -> List[Dict]:
             "sample": sample,
             "label": prop.label,
             "area_pixels": prop.area,
-            "area_micron": prop.area * area_of_one_pixel,
+            "area_micron": prop.area * PIXEL_SIZE**2,
             "perimeter_pixels": prop.perimeter,
-            "perimeter_micron": prop.perimeter * pixel_size
+            "perimeter_micron": prop.perimeter * PIXEL_SIZE,
         }
         for prop in properties
     ]
