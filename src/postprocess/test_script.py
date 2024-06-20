@@ -85,4 +85,4 @@ for item in tqdm(sample_data):
 
 
 df = pd.DataFrame(all_object_sizes)
-df.to_csv(os.path.join(DATA_PATH, "object_sizes.csv"), index=False)
+df.to_csv(os.path.join(DATA_PATH, "object_measure.csv"), index=False)
