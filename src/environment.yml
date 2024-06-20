@@ -15,6 +15,10 @@ dependencies:
   - tensorflow[and-cuda]
   - tqdm
   - zarr=2.18
+
+  - seaborn=0.13.2
+  - pyarrow=16.1.0
+  
   - pip:
     - gputools
     - stardist==0.9.1
