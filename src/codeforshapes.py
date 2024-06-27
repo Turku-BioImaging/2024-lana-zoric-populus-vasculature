@@ -7,6 +7,7 @@ from glob import glob
 
 import numpy as np
 import polars as pl
+from joblib import Parallel, delayed
 from rasterio.features import rasterize
 from shapely.geometry import Polygon
 from skimage import io
@@ -33,15 +34,18 @@ IMG_DIR = os.path.join(
 )
 
 OUTPUT_DIR = os.path.join(
-    os.path.dirname(__file__), "..", "data", "stardist_data", "labelsNew"
+    os.path.dirname(__file__), "..", "data", "stardist_data", "labels_new"
 )
 
 shapefile_paths = sorted(glob(os.path.join(SHAPE_DIR, "*.csv")))
 img_paths = sorted(glob(os.path.join(IMG_DIR, "*.tif")))
 
+assert len(shapefile_paths) == len(img_paths)
+
 data_paths = list(zip(img_paths, shapefile_paths))
 
-for item in tqdm(data_paths):
+
+def process_data(item):
     img_path, shapefile_path = item
 
     assert (
@@ -79,3 +83,6 @@ for item in tqdm(data_paths):
         label_img,
         check_contrast=False,
     )
+
+
+Parallel(n_jobs=-1)(delayed(process_data)(item) for item in tqdm(data_paths))
