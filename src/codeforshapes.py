@@ -20,7 +20,7 @@ SHAPE_DIR = os.path.join(
     "data",
     "stardist_data",
     "images_for_annotation",
-    "shapes",
+    "remaining_anot",
 )
 
 IMG_DIR = os.path.join(
@@ -29,11 +29,11 @@ IMG_DIR = os.path.join(
     "data",
     "stardist_data",
     "images_for_annotation",
-    "images",
+    "remaining_img",
 )
 
 OUTPUT_DIR = os.path.join(
-    os.path.dirname(__file__), "..", "data", "stardist_data", "labels"
+    os.path.dirname(__file__), "..", "data", "stardist_data", "labelsNew"
 )
 
 shapefile_paths = sorted(glob(os.path.join(SHAPE_DIR, "*.csv")))
