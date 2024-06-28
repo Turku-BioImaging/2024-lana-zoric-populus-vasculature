@@ -7,10 +7,12 @@ from tqdm import tqdm
 from skimage.segmentation import clear_border
 import numpy as np
 import pandas as pd
-from skimage.metrics import adapted_rand_error as calculate_iou
 
 # First perform remove objects touching boundaries and create labelled images so # that these are compatible with the predicted images
 
+CLONE_SAMPLE_DIR = os.path.join(
+    os.path.dirname(__file__), "..", "..", "data", "outputs"
+)
 
 # Path to annotated images directory
 ANNOTATED_DIR = os.path.join(
@@ -24,11 +26,11 @@ ANNOTATED_DIR = os.path.join(
 )
 
 OUTPUT_DIR = os.path.join(
-    os.path.dirname(__file__), 
+    os.path.dirname(__file__),
     "..",
-    "..", 
-    "data", 
-    "stardist_data", 
+    "..",
+    "data",
+    "stardist_data",
     "stardist_accuracy",
     "labelled_annotated",
 )
@@ -39,16 +41,16 @@ annotated_img_paths = sorted(glob(os.path.join(ANNOTATED_DIR, "*.tif")))
 for img_path in tqdm(annotated_img_paths):
     # Read the image
     img = io.imread(img_path)
-    
+
     # Remove objects touching the border
     annotated_img = clear_border(img)
-    
+
     # Apply connected component labeling
     annotated_labeled = label(annotated_img)
-    
+
     # Construct the output file name
     label_fname = os.path.basename(img_path)
-    
+
     # Save the labeled image
     io.imsave(
         os.path.join(OUTPUT_DIR, label_fname),
@@ -60,14 +62,14 @@ for img_path in tqdm(annotated_img_paths):
 PREDICTION_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "outputs")
 
 
-def process_sample(PREDICTION_DIR: str, clone: str, sample: str) -> List[Dict]:
-    mask = io.imread(os.path.join(PREDICTION_DIR, clone, sample, "stardist_label.tif"))
-    assert mask.ndim == 2
+# def process_sample(PREDICTION_DIR: str, clone: str, sample: str) -> List[Dict]:
+#     mask = io.imread(os.path.join(PREDICTION_DIR, clone, sample, "stardist_label.tif"))
+#     assert mask.ndim == 2
 
-    mask = mask > 0
+#     mask = mask > 0
 
-    labeled_mask = label(mask)
-    
+#     labeled_mask = label(mask)
+
 
 clone_data = [
     (clone, sample)
@@ -77,38 +79,71 @@ clone_data = [
     if os.path.isdir(os.path.join(PREDICTION_DIR, clone, sample))
 ]
 
+
 def calculate_iou(predicted, annotated):
     """Calculate the Intersection over Union (IoU) for a pair of images."""
+
+    predicted = predicted > 0
+    annotated = annotated > 0
+
     intersection = np.logical_and(predicted, annotated)
     union = np.logical_or(predicted, annotated)
     iou = np.sum(intersection) / np.sum(union)
     return iou
 
-def main(predicted_folder, annotated_folder, output_csv):
+
+clone_sample_data = [
+    (clone, sample)
+    for clone in os.listdir(CLONE_SAMPLE_DIR)
+    if os.path.isdir(os.path.join(CLONE_SAMPLE_DIR, clone))
+    for sample in os.listdir(os.path.join(CLONE_SAMPLE_DIR, clone))
+    if os.path.isdir(os.path.join(CLONE_SAMPLE_DIR, clone, sample))
+]
+
+
+def _get_prediction_fpath(annotated_img_path: str) -> str:
+    clone_sample_dir_name = (
+        os.path.basename(annotated_img_path)
+        .replace("-", "_")
+        .replace(" ", "_")
+        .replace(".tif", "")
+    )
+
+    clone: str = ""
+    sample: str = ""
+    for clone, sample in clone_sample_data:
+        if clone_sample_dir_name in sample:
+            clone = clone
+            sample = sample
+            break
+
+    stardist_label_path: str = os.path.join(
+        CLONE_SAMPLE_DIR, clone, sample, "stardist_label.tif"
+    )
+
+    return stardist_label_path
+
+
+def main():
     iou_scores = []
-    predicted_images = sorted(os.listdir(predicted_folder))
-    annotated_images = sorted(os.listdir(annotated_folder))
+    csv_path = "iou_scores.csv"
+    annotated_img_paths = sorted(glob(os.path.join(ANNOTATED_DIR, "*.tif")))
 
-    for pred_img, ann_img in zip(predicted_images, annotated_images):
-        pred_path = os.path.join(predicted_folder, pred_img)
-        ann_path = os.path.join(annotated_folder, ann_img)
+    for annotated_img_fname in tqdm(annotated_img_paths):
+        stardist_label_path = _get_prediction_fpath(annotated_img_fname)
+        annotated_img_path = os.path.join(OUTPUT_DIR, annotated_img_fname)
 
-        predicted = io.imread(pred_path)
-        annotated = io.imread(ann_path)
+        pred_img = io.imread(stardist_label_path)
+        gt_img = io.imread(annotated_img_path)
 
-        iou = calculate_iou(predicted, annotated)
-        iou_scores.append((pred_img, iou))
+        iou = calculate_iou(pred_img, gt_img)
+        iou_scores.append(iou)
 
     # Save IoU scores to a CSV file
-    iou_df = pd.DataFrame(iou_scores, columns=['Image', 'IoU'])
-    iou_df.to_csv(output_csv, index=False)
-    print(f"IoU scores saved to {output_csv}")
+    iou_df = pd.DataFrame(iou_scores, columns=["Image", "IoU"])
+    iou_df.to_csv(csv_path, index=False)
+    print(f"IoU scores saved to {csv_path}")
+
 
 if __name__ == "__main__":
-    predicted_folder = os.path.join(PREDICTION_DIR)
-    annotated_folder = os.path.join(OUTPUT_DIR)
-    output_csv = "iou_scores.csv"
-    main(predicted_folder, annotated_folder, output_csv)
-
-
-
+    main()
