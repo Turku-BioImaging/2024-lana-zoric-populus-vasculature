@@ -8,6 +8,7 @@ import argparse
 import os
 
 from util.zarr_converter import convert_raw_data_to_zarr
+from stardist_prediction.predict import StarDistPredictor
 
 RAW_DATA_DIR = os.path.join(
     os.path.dirname(__file__), "..", "data", "raw_data", "Populus"
@@ -33,7 +34,15 @@ parser.add_argument(
     "--skip-raw-data", action="store_true", help="Skip copying raw data"
 )
 
+parser.add_argument(
+    "--skip-stardist", action="store_true", help="Skip StarDist prediction"
+)
+
 args = parser.parse_args()
 
 if not args.skip_raw_data:
     convert_raw_data_to_zarr(args.raw_data_dir, args.zarr_path)
+
+if not args.skip_stardist:
+    predictor = StarDistPredictor(zarr_path=args.zarr_path)
+    predictor.predict_all()
