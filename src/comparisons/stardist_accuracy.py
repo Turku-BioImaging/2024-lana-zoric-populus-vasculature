@@ -66,15 +66,6 @@ for img_path in tqdm(annotated_img_paths):
 PREDICTION_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "outputs")
 
 
-# def process_sample(PREDICTION_DIR: str, clone: str, sample: str) -> List[Dict]:
-#     mask = io.imread(os.path.join(PREDICTION_DIR, clone, sample, "stardist_label.tif"))
-#     assert mask.ndim == 2
-
-#     mask = mask > 0
-
-#     labeled_mask = label(mask)
-
-
 clone_data = [
     (clone, sample)
     for clone in os.listdir(PREDICTION_DIR)
@@ -125,7 +116,7 @@ def _get_prediction_fpath(annotated_img_path: str) -> str:
         CLONE_SAMPLE_DIR, clone, sample, "stardist_label.tif"
     )
 
-    return stardist_label_path
+    return stardist_label_path, clone_sample_dir_name
 
 
 def main():
@@ -134,17 +125,20 @@ def main():
     annotated_img_paths = sorted(glob(os.path.join(ANNOTATED_DIR, "*.tif")))
 
     for annotated_img_fname in tqdm(annotated_img_paths):
-        stardist_label_path = _get_prediction_fpath(annotated_img_fname)
-        annotated_img_path = os.path.join(OUTPUT_DIR, annotated_img_fname)
+        stardist_label_path, prediction_img_name = _get_prediction_fpath(annotated_img_fname)
+        annotated_img_name = os.path.basename(annotated_img_fname)
+        annotated_img_path = os.path.join(OUTPUT_DIR, annotated_img_name)
 
         pred_img = io.imread(stardist_label_path)
         gt_img = io.imread(annotated_img_path)
 
         iou = calculate_iou(pred_img, gt_img)
-        iou_scores.append(iou)
+        # iou_scores.append(iou)
+        iou_scores.append((prediction_img_name, annotated_img_name, iou))
 
     # Save IoU scores to a CSV file
-    iou_df = pd.DataFrame(iou_scores, columns=["Image", "IoU"])
+    # iou_df = pd.DataFrame(iou_scores, columns=["Image", "IoU"])
+    iou_df = pd.DataFrame(iou_scores, columns=["Prediction Image", "Ground Truth Image", "IoU"])
     iou_df.to_csv(csv_path, index=False)
     print(f"IoU scores saved to {csv_path}")
 
