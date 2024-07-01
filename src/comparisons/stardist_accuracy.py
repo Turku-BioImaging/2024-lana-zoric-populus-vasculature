@@ -1,3 +1,7 @@
+""" 
+This script compares the performance of the StarDist model versus the manually annnotated shapes. Expected input data is the raw data, and the manually annotated shape files.
+"""
+
 import os
 from glob import glob
 from typing import Dict, List
