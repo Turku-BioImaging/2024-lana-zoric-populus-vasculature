@@ -18,6 +18,7 @@ ZARR_PATH = os.path.join(
     os.path.dirname(__file__), "..", "data", "zarr_data", "data.zarr"
 )
 
+# Define allowed command-line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--raw-data-dir",
@@ -40,9 +41,12 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+# Write the raw data to Zarr datasets.
 if not args.skip_raw_data:
     convert_raw_data_to_zarr(args.raw_data_dir, args.zarr_path)
 
+# Generate predictions using StarDist.
+# Write to Zarr.
 if not args.skip_stardist:
     predictor = StarDistPredictor(zarr_path=args.zarr_path)
     predictor.predict_all()
