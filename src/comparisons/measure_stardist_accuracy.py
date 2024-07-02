@@ -12,6 +12,7 @@ import zarr
 from joblib import Parallel, delayed
 from rasterio.features import rasterize
 from shapely.geometry import Polygon
+from skimage.segmentation import clear_border
 from skimage.measure import label
 from tqdm import tqdm
 from zarr.hierarchy import Group
@@ -86,7 +87,8 @@ def __shapefile_to_label_img(
         polygon = Polygon(zip(polygon_data["x"], polygon_data["y"]))
         polygon_mask = rasterize([polygon], out_shape=raw_data.shape[:-1])
         complete_mask[polygon_mask == 1] = 1
-
+    
+    complete_mask = clear_border(complete_mask)
     complete_mask = label(complete_mask)
     return complete_mask
 
