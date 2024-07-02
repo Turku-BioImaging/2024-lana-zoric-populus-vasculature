@@ -12,10 +12,12 @@ import zarr
 from joblib import Parallel, delayed
 from rasterio.features import rasterize
 from shapely.geometry import Polygon
-from skimage.segmentation import clear_border
 from skimage.measure import label
+from skimage.segmentation import clear_border
 from tqdm import tqdm
 from zarr.hierarchy import Group
+
+from src.util.name_sanitizer import find_matching_shapefile
 
 ZARR_PATH = os.path.join(
     os.path.dirname(__file__), "..", "..", "data", "zarr_data", "data.zarr"
@@ -29,28 +31,6 @@ SHAPE_DIR = os.path.join(
     "images_for_annotation",
     "shapes",
 )
-
-
-def __sanitize_name(name: str) -> str:
-    name = (
-        name.replace(" +", "")
-        .replace("+", "")
-        .replace(" ", "_")
-        .replace("-", "_")
-        .replace("(", "")
-        .replace(")", "")
-        .rsplit(".", 1)[0]
-    )
-
-    return name
-
-
-def __find_matching_shapefile(shape_paths: list, sample: str) -> str:
-    for idx, shape_path in enumerate(shape_paths):
-        path_fname = os.path.basename(shape_path)
-        sanitized_fname = __sanitize_name(path_fname)
-        if sanitized_fname == sample:
-            return shape_paths[idx]
 
 
 def __calculate_iou(predicted, annotated):
@@ -87,14 +67,14 @@ def __shapefile_to_label_img(
         polygon = Polygon(zip(polygon_data["x"], polygon_data["y"]))
         polygon_mask = rasterize([polygon], out_shape=raw_data.shape[:-1])
         complete_mask[polygon_mask == 1] = 1
-    
+
     complete_mask = clear_border(complete_mask)
     complete_mask = label(complete_mask)
     return complete_mask
 
 
 def __process_sample(root: Group, shape_paths: list, clone: str, sample: str):
-    shapefile_path = __find_matching_shapefile(shape_paths, sample)
+    shapefile_path = find_matching_shapefile(shape_paths, sample)
 
     gt_labels = __shapefile_to_label_img(
         shapefile_path=shapefile_path, clone=clone, sample=sample, root=root
