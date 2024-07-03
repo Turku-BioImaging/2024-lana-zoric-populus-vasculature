@@ -33,14 +33,27 @@ SHAPE_DIR = os.path.join(
 )
 
 
-def __calculate_iou(predicted, annotated):
-    predicted = predicted > 0
-    annotated = annotated > 0
+# def __calculate_iou(predicted, annotated):
+#     predicted = predicted > 0
+#     annotated = annotated > 0
 
-    intersection = np.logical_and(predicted, annotated)
-    union = np.logical_or(predicted, annotated)
+#     intersection = np.logical_and(predicted, annotated)
+#     union = np.logical_or(predicted, annotated)
+#     iou = np.sum(intersection) / np.sum(union)
+#     return iou
+
+
+def __calculate_iou_per_label(predicted, annotated, label_id) -> float:
+    pred_label = predicted == label_id
+    anno_label = annotated == label_id
+
+    intersection = np.logical_and(pred_label, anno_label)
+    union = np.logical_or(pred_label, anno_label)
+    if np.sum(union) == 0:
+        return 0.0
     iou = np.sum(intersection) / np.sum(union)
     return iou
+
 
 
 def __shapefile_to_label_img(
@@ -86,11 +99,20 @@ def __process_sample(root: Group, shape_paths: list, clone: str, sample: str):
         gt_labels.shape == pred_labels.shape
     ), "Ground truth and prediction label dimensions do not match."
 
-    iou = __calculate_iou(predicted=pred_labels, annotated=gt_labels)
+    # iou = __calculate_iou(predicted=pred_labels, annotated=gt_labels)
 
-    data = {"clone": clone, "sample": sample, "iou": iou}
-    return data
+    # data = {"clone": clone, "sample": sample, "iou": iou}
+    # return data
+    
+    gt_unique_labels = np.unique(gt_labels)
+    pred_unique_labels = np.unique(pred_labels)
 
+    results = []
+    for label_id in np.union1d(gt_unique_labels, pred_unique_labels):
+        iou = __calculate_iou_per_label(predicted=pred_labels, annotated=gt_labels, label_id=label_id)
+        results.append({"clone": clone, "sample": sample, "label_id": label_id, "iou": iou})
+
+    return results
 
 def main():
     root = zarr.open_group(ZARR_PATH, mode="a")
@@ -102,14 +124,17 @@ def main():
         for sample in list(root[clone].keys())
     ]
 
-    data = Parallel(n_jobs=-1)(
+    all_data = Parallel(n_jobs=-1)(
         delayed(__process_sample)(root, SHAPE_PATHS, clone, sample)
         for clone, sample in tqdm(clone_sample_data)
     )
 
-    df = pl.DataFrame(data)
-    df.write_csv(os.path.join(os.path.dirname(__file__), "iou_scores.csv"))
+    # df = pl.DataFrame(data)
+    # df.write_csv(os.path.join(os.path.dirname(__file__), "iou_scores.csv"))
 
+    flat_data = [item for sublist in all_data for item in sublist]
+    df = pl.DataFrame(flat_data)
+    df.write_csv(os.path.join(os.path.dirname(__file__), "label_iou_scores.csv"))
 
 if __name__ == "__main__":
     main()
