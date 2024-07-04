@@ -1,0 +1,1 @@
+PIXEL_SIZE = 0.0878 # microns (estimated from scale bars)

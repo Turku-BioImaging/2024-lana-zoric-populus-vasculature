@@ -3,6 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - ca-certificates
+  - dask=2024.6.2
   - joblib
   - matplotlib
   - openssl

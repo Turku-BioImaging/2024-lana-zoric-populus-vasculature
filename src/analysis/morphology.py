@@ -1,15 +1,15 @@
 import os
 from glob import glob
 from typing import Any, Dict, List
-
+import dask.array as da
 import numpy as np
 import polars as pl
 import zarr
 from skimage.measure import regionprops
 from tqdm import tqdm
 from util.shapefile import shapefile_to_label_img
-
-from src.util.name_sanitizer import find_matching_shapefile
+from constants import PIXEL_SIZE
+from util.name_sanitizer import find_matching_shapefile
 
 ZARR_PATH = os.path.join(
     os.path.dirname(__file__), "..", "..", "data", "zarr_data", "data.zarr"
@@ -24,8 +24,6 @@ SHAPE_DIR = os.path.join(
     "images_for_annotation",
     "shapes",
 )
-
-PIXEL_SIZE = 0.0878
 
 
 def __measure_labels(label_img: np.ndarray) -> List[Dict]:
@@ -87,8 +85,35 @@ def process_zarr_data(zarr_path: str):
     clone_data_df.write_csv("morphology_data.csv")
 
 
+def process_sample_image_sizes(zarr_path: str):
+    root = zarr.open_group(zarr_path, mode="r")
+
+    clone_sample_data = [
+        (clone, sample)
+        for clone in list(root.keys())
+        for sample in list(root[clone].keys())
+    ]
+
+    data = []
+
+    for clone, sample in tqdm(clone_sample_data, desc="Processing sample image sizes"):
+        raw_data: da.Array = da.from_zarr(root[f"{clone}/{sample}/raw_data"])
+
+        height, width = raw_data.shape[:-1]
+
+        img_area_microns = (height * PIXEL_SIZE) * (width * PIXEL_SIZE)
+
+        data.append(
+            {"clone": clone, "sample": sample, "area_microns": img_area_microns}
+        )
+
+    df = pl.DataFrame(data)
+    df.write_csv("image_areas.csv")
+
+
 def main():
     process_zarr_data(ZARR_PATH)
+    process_sample_image_sizes(ZARR_PATH)
 
 
 if __name__ == "__main__":
