@@ -6,6 +6,7 @@ import seaborn as sns
 
 from statsmodels.formula.api import ols
 import statsmodels.api as sm
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "outputs")
 
@@ -28,13 +29,29 @@ plt.tight_layout()
 plt.savefig(os.path.join(DATA_DIR, "area_distribution.png"))
 # plt.show()
 
-# Perform ANOVA
-model = ols('area_micron ~ C(clone)', data=df).fit()
-anova_table = sm.stats.anova_lm(model, typ=2)
-print(anova_table)
+# # Perform ANOVA test (gives difference in mean area across different clones)
+# model = ols('area_micron ~ C(clone)', data=df).fit()
+# anova_table = sm.stats.anova_lm(model, typ=2)
+# print(anova_table)
 
 # save the ANOVA table to a file
 # anova_table.to_csv(os.path.join(DATA_DIR, "anova_results.csv"))
+
+# Perform Tukey's HSD test to check which clones are different 
+tukey_results = pairwise_tukeyhsd(df['area_micron'], df['clone'], alpha=0.05)
+
+print(tukey_results)
+
+# Plot Tukey's HSD results
+plt.figure(figsize=(10, 6))
+tukey_results.plot_simultaneous()
+plt.title("Tukey's HSD Test for Clone Groups")
+plt.xlabel("Mean Difference")
+plt.ylabel("Clone")
+plt.tight_layout()
+plt.savefig(os.path.join(DATA_DIR, "tukey_hsd.png"))
+
+
 
 # # Plot perimeters in microns
 # plt.figure(figsize=(15, 10))
