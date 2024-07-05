@@ -1,3 +1,7 @@
+"""
+Measures vesicle morphology from ground-truth shapefiles and saves the data to a CSV file.
+"""
+
 import os
 from glob import glob
 from typing import Any, Dict, List
