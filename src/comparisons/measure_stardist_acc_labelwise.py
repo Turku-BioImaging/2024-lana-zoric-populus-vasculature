@@ -1,3 +1,7 @@
+"""
+This code compare ground truth and stardist predictions labels-wise 
+"""
+
 import os
 from glob import glob
 from typing import Any, List, Dict

@@ -1,3 +1,7 @@
+"""
+This code first calculate mean area in micron for each clone and then plot the bar graph for mean area for each clone  
+"""
+
 import os
 import polars as pl
 import pandas as pd
@@ -19,13 +23,6 @@ mean_area_by_clone = df.groupby('clone')['area_micron'].mean().reset_index()
 
 # Print the results
 print(mean_area_by_clone)
-
-# # Ensure the output directory exists
-# os.makedirs(DATA_DIR, exist_ok=True)
-
-# # Save the results to a CSV file
-# mean_area_csv_path = os.path.join(DATA_DIR, "mean_area_by_clone.csv")
-# mean_area_by_clone.to_csv(mean_area_csv_path, index=False)
 
 # Plot settings
 sns.set(style="whitegrid")

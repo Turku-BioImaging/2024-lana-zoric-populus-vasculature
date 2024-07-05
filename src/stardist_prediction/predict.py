@@ -99,7 +99,7 @@ class StarDistPredictor:
             for sample in list(root[clone].keys())  # type: ignore
         ]
 
-        Parallel(n_jobs=n_jobs)(
+        Parallel(n_jobs=4)(
             delayed(process_one_sample)(self.zarr_path, clone, sample, self.model)
             for clone, sample in tqdm(clone_sample_data)
         )
