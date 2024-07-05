@@ -10,6 +10,7 @@ from joblib import Parallel, delayed
 from skimage import io
 from tqdm import tqdm
 from zarr.hierarchy import Group
+from constants import PIXEL_SIZE
 
 from .name_sanitizer import sanitize_name
 
@@ -39,7 +40,7 @@ def __process_clone_sample(clone, sample, raw_data_dir, root: Group):
             "clone": clone,
             "sample": sample,
             "author": "Lana Zoric, University of Novi Sad",
-            "resolution": {"unit": "microns/pixel", "x": 0.0878, "y": 0.0878},
+            "resolution": {"unit": "microns/pixel", "x": PIXEL_SIZE, "y": PIXEL_SIZE},
         }
     )
 
