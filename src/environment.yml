@@ -3,6 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - ca-certificates
+  - dask=2024.6.2
   - joblib
   - matplotlib
   - openssl
@@ -12,7 +13,7 @@ dependencies:
   - rasterio=1.3
   - scikit-image=0.23
   - shapely=2.0
-  - tensorflow[and-cuda]
+  - tensorflow
   - tqdm
   - zarr=2.18
   - seaborn=0.13.2
