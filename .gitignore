@@ -163,3 +163,4 @@ data/e
 **/*.csv
 .nextflow/
 .nextflow.log*
+*.config.local
