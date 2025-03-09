@@ -1,0 +1,33 @@
+// Do not modify this file.
+// Instead, make a local copy e.g. nextflow.config.local
+// modify it, and reference it in your Nextflow run
+// `nextflow run main.nf -c nextflow.config.local`
+
+workDir = <path-to-working-directory>
+
+params {
+    projectDir = "${projectDir}"
+    inputDir = <path-to-raw-data>
+    shapeDir = <path-to-csv-defining-shapes>
+    outputDir = <path-to-save-output-to>
+}
+
+process {
+    executor = 'local'
+    cache = 'lenient'
+
+    withName: SanitizeFilenames {
+        cpus = 1
+        memory = 1.GB
+    }
+
+    withName: GenerateLabelsFromShapes {
+        cpus = 1
+        memory = 1.GB
+    }
+
+    withName: GatherMorphologyData {
+        cpus = 12
+        memory = 4.GB
+    }
+}
