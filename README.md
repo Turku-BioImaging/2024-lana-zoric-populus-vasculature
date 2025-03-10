@@ -1,7 +1,6 @@
-# project-plant-vasculature
+# Stem Xylem Traits in Poplar Genotypes (Populus L.): Additional Parameters for Selection and Breeding
+This is a companion repository to the manuscript, detailing the image processing code.
 
-## dev notes
-For cross-compatibility between computers, create a __data__ directory in the root of the repository. This __data__ directory should contain symlinks to the raw and output data stores.
+## Data sources
 
-Estimated pixel size = 0.0878 micrometer/pixel
-
+## Workflow run
