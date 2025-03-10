@@ -1,0 +1,16 @@
+name: 2024-lana-zoric-populus-vasculature
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip:
+    - dask==2025.2.0
+    - imagecodecs
+    - nextflow==24.10.5
+    - numpy<2
+    - polars==1.24.0
+    - pyarrow
+    - rasterio==1.4.3
+    - scikit-image==0.25.2
+    - seaborn
+    - shapely==2.0.7
