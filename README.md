@@ -1,4 +1,7 @@
 # Stem Xylem Traits in Poplar Genotypes (Populus L.): *Additional Parameters for Selection and Breeding*
+*--Need author and organization information here, similar to the manuscript--*
+
+*--DOI badge here when available--*  
 This is a companion repository to the manuscript, detailing the image processing code.
 
 ### Abstract
@@ -10,5 +13,9 @@ __Key words__: *cavitation, stem anatomy, vessels, water conductivity*
 
 
 ## Data sources
+*--Links to Allas bucket containing raw and output data--*  
 
 ## Workflow run
+*--add instructions for running the workflow--*
+
+*--University / organization logos here --*
