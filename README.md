@@ -1,14 +1,7 @@
 # Stem Xylem Traits in Poplar Genotypes (Populus L.): *Additional Parameters for Selection and Breeding*
-*--Need author and organization information here, similar to the manuscript--*
 
-Zorić Lana<sup>1</sup>, Pilipović Andrej<sup>2</sup>, Junel Solis<sup>3</sup>, Ramish Bibi<sup>3</sup>, Irina Belaia<sup>3</sup>, Dado Tokic<sup>3</sup>, Pasi Kankaanpää <sup>3</sup>, Davidović Sonja <sup>1</sup>, Karanović Dunja <sup>1</sup>, Luković Jadranka <sup>1</sup>
-
-<sup>1</sup>University of Novi Sad, Faculty of Sciences, Department of Biology and Ecology, Novi Sad, Serbia
-
-<sup>2</sup>University of Minnesota Duluth, Natural Research Institute, Duluth, MN, USA
-
-<sup>3</sup>Turku BioImaging, Åbo Akademi Unicersity and University of Turku, Turku, Finland
-
+__Zorić Lana<sup>1</sup>, Pilipović Andrej<sup>2</sup>, Junel Solis<sup>3</sup>, Ramish Bibi<sup>3</sup>, Irina Belaia<sup>3</sup>, Dado Tokic<sup>3</sup>, Pasi Kankaanpää <sup>3</sup>, Davidović Sonja <sup>1</sup>, Karanović Dunja <sup>1</sup>, Luković Jadranka <sup>1</sup>__
+[See affiliations](#organizational-affiliations)
 <!-- I have used the information from the manuscript draft, can correct if something has changed and needs to be edited. Also if the corresponding author needs to be added -->
 
 *--DOI badge here when available--*  
@@ -28,4 +21,27 @@ __Key words__: *cavitation, stem anatomy, vessels, water conductivity*
 ## Workflow run
 *--add instructions for running the workflow--*
 
-*--University / organization logos here --*
+## Organizational Affiliations
+<sup>1</sup>University of Novi Sad, Faculty of Sciences, Department of Biology and Ecology, Novi Sad, Serbia
+
+<sup>2</sup>University of Minnesota Duluth, Natural Research Institute, Duluth, MN, USA
+
+<sup>3</sup>Turku BioImaging, Åbo Akademi Unicersity and University of Turku, Turku, Finland
+
+
+<!-- <p align="center">
+  <img src="https://novisad2022.rs/wp-content/uploads/2021/06/univerzitet-u-novom-sadu-297x300.png" alt="University of Novi Sad Logo" width="200">
+</p>
+<p align="center">
+  <img src="https://apps.utu.fi/media/logo/UTU_logo_EN_RGB.png" alt="University of Turku Logo" width="500">
+</p>
+<p align="center">
+  <img src="https://www.abo.fi/wp-content/uploads/2019/09/AboAkademi-logo_black.png" alt="Åbo Akademi Logo" width="300">
+</p> -->
+
+
+<p align="center" style="display: flex; justify-content: center; gap: 25px;">
+  <img src="https://novisad2022.rs/wp-content/uploads/2021/06/univerzitet-u-novom-sadu-297x300.png" alt="University of Novi Sad Logo" width="200">
+  <img src="https://apps.utu.fi/media/logo/UTU_logo_EN_RGB.png" alt="University of Turku Logo" width="500">
+  <img src="https://www.abo.fi/wp-content/uploads/2019/09/AboAkademi-logo_black.png" alt="Åbo Akademi Logo" width="270">
+</p>
