@@ -40,8 +40,10 @@ __Key words__: *cavitation, stem anatomy, vessels, water conductivity*
 </p> -->
 
 
+
+
 <p align="center" style="display: flex; justify-content: center; gap: 25px;">
-  <img src="https://novisad2022.rs/wp-content/uploads/2021/06/univerzitet-u-novom-sadu-297x300.png" alt="University of Novi Sad Logo" width="200">
-  <img src="https://apps.utu.fi/media/logo/UTU_logo_EN_RGB.png" alt="University of Turku Logo" width="500">
-  <img src="https://www.abo.fi/wp-content/uploads/2019/09/AboAkademi-logo_black.png" alt="Åbo Akademi Logo" width="270">
+  <img src="https://novisad2022.rs/wp-content/uploads/2021/06/univerzitet-u-novom-sadu-297x300.png" alt="University of Novi Sad Logo" style="height: 100px; width: auto;">
+  <img src="https://apps.utu.fi/media/logo/UTU_logo_EN_RGB.png" alt="University of Turku Logo" style="height: 100px; width: auto;">
+  <img src="https://www.abo.fi/wp-content/uploads/2019/09/AboAkademi-logo_black.png" alt="Åbo Akademi Logo" style="height: 100px; width: auto;">
 </p>
